@@ -1,0 +1,465 @@
+{
+  "displayName": "Webhook.site",
+  "name": "webhooksite",
+  "group": ["transform"],
+  "version": 1,
+  "subtitle": "={{ $parameter[\"operation\"] }}",
+  "iconUrl": "https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/webhook.svg",
+  "description": "Test webhooks and HTTP requests with webhook.site",
+  "defaults": {
+    "name": "Webhook.site"
+  },
+  "usableAsTool": true,
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "requestDefaults": {
+    "baseURL": "https://webhook.site",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "properties": [
+    {
+      "displayName": "Operation",
+      "name": "operation",
+      "type": "options",
+      "noDataExpression": true,
+      "options": [
+        {
+          "name": "Create URL",
+          "value": "createToken",
+          "description": "Create a new webhook URL",
+          "action": "Create a new webhook URL",
+          "routing": {
+            "request": {
+              "method": "POST",
+              "url": "/token"
+            }
+          }
+        },
+        {
+          "name": "Get URL Info",
+          "value": "getToken",
+          "description": "Get information about a webhook URL",
+          "action": "Get URL information",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "=/token/{{$parameter[\"tokenId\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Update URL",
+          "value": "updateToken",
+          "description": "Update URL settings",
+          "action": "Update URL settings",
+          "routing": {
+            "request": {
+              "method": "PUT",
+              "url": "=/token/{{$parameter[\"tokenId\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Delete URL",
+          "value": "deleteToken",
+          "description": "Delete a webhook URL",
+          "action": "Delete a URL",
+          "routing": {
+            "request": {
+              "method": "DELETE",
+              "url": "=/token/{{$parameter[\"tokenId\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Get Requests",
+          "value": "getRequests",
+          "description": "Get requests received by a webhook",
+          "action": "Get received requests",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "=/token/{{$parameter[\"tokenId\"]}}/requests"
+            },
+            "output": {
+              "postReceive": [
+                {
+                  "type": "rootProperty",
+                  "properties": {
+                    "property": "data"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Request Details",
+          "value": "getRequest",
+          "description": "Get details of a specific request",
+          "action": "Get request details",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "=/token/{{$parameter[\"tokenId\"]}}/request/{{$parameter[\"requestId\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Delete Request",
+          "value": "deleteRequest",
+          "description": "Delete a specific request",
+          "action": "Delete a request",
+          "routing": {
+            "request": {
+              "method": "DELETE",
+              "url": "=/token/{{$parameter[\"tokenId\"]}}/request/{{$parameter[\"requestId\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Delete All Requests",
+          "value": "deleteAllRequests",
+          "description": "Delete all requests for a URL",
+          "action": "Delete all requests",
+          "routing": {
+            "request": {
+              "method": "DELETE",
+              "url": "=/token/{{$parameter[\"tokenId\"]}}/requests"
+            }
+          }
+        },
+        {
+          "name": "Send Test Request",
+          "value": "sendRequest",
+          "description": "Send a test request to your webhook",
+          "action": "Send test request",
+          "routing": {
+            "request": {
+              "method": "={{ $parameter[\"method\"] || \"POST\" }}",
+              "url": "=/{{$parameter[\"tokenId\"]}}"
+            }
+          }
+        }
+      ],
+      "default": "createToken",
+      "description": "The operation to perform"
+    },
+    {
+      "displayName": "URL ID",
+      "name": "tokenId",
+      "type": "string",
+      "default": "",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["getToken", "updateToken", "deleteToken", "getRequests", "getRequest", "deleteRequest", "deleteAllRequests", "sendRequest"]
+        }
+      },
+      "description": "The webhook URL ID (UUID)",
+      "placeholder": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "displayName": "Request ID",
+      "name": "requestId",
+      "type": "string",
+      "default": "",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["getRequest", "deleteRequest"]
+        }
+      },
+      "description": "The request ID (UUID)",
+      "placeholder": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "displayName": "HTTP Method",
+      "name": "method",
+      "type": "options",
+      "default": "POST",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["sendRequest"]
+        }
+      },
+      "options": [
+        {
+          "name": "GET",
+          "value": "GET"
+        },
+        {
+          "name": "POST",
+          "value": "POST"
+        },
+        {
+          "name": "PUT",
+          "value": "PUT"
+        },
+        {
+          "name": "PATCH",
+          "value": "PATCH"
+        },
+        {
+          "name": "DELETE",
+          "value": "DELETE"
+        }
+      ],
+      "description": "HTTP method for the test request"
+    },
+    {
+      "displayName": "Request Body",
+      "name": "body",
+      "type": "json",
+      "default": "{}",
+      "displayOptions": {
+        "show": {
+          "operation": ["sendRequest"],
+          "method": ["POST", "PUT", "PATCH"]
+        }
+      },
+      "description": "JSON body to send with the request",
+      "routing": {
+        "send": {
+          "type": "body"
+        }
+      }
+    },
+    {
+      "displayName": "Options",
+      "name": "options",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Option",
+      "displayOptions": {
+        "show": {
+          "operation": ["createToken", "updateToken"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Default Status",
+          "name": "default_status",
+          "type": "number",
+          "default": 200,
+          "description": "Default HTTP status code to return",
+          "routing": {
+            "send": {
+              "type": "body",
+              "property": "default_status"
+            }
+          }
+        },
+        {
+          "displayName": "Default Content",
+          "name": "default_content",
+          "type": "string",
+          "default": "",
+          "description": "Default response content",
+          "routing": {
+            "send": {
+              "type": "body",
+              "property": "default_content"
+            }
+          }
+        },
+        {
+          "displayName": "Default Content Type",
+          "name": "default_content_type",
+          "type": "string",
+          "default": "text/plain",
+          "description": "Default content type for responses",
+          "routing": {
+            "send": {
+              "type": "body",
+              "property": "default_content_type"
+            }
+          }
+        },
+        {
+          "displayName": "Timeout",
+          "name": "timeout",
+          "type": "number",
+          "default": 0,
+          "description": "Response timeout in seconds (0 for no timeout)",
+          "routing": {
+            "send": {
+              "type": "body",
+              "property": "timeout"
+            }
+          }
+        },
+        {
+          "displayName": "CORS",
+          "name": "cors",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to enable CORS headers",
+          "routing": {
+            "send": {
+              "type": "body",
+              "property": "cors"
+            }
+          }
+        },
+        {
+          "displayName": "Expiry Days",
+          "name": "expiry",
+          "type": "number",
+          "default": 7,
+          "description": "Number of days until the URL expires",
+          "routing": {
+            "send": {
+              "type": "body",
+              "property": "expiry"
+            }
+          }
+        },
+        {
+          "displayName": "Alias",
+          "name": "alias",
+          "type": "string",
+          "default": "",
+          "description": "Custom alias for the webhook URL",
+          "routing": {
+            "send": {
+              "type": "body",
+              "property": "alias"
+            }
+          }
+        },
+        {
+          "displayName": "Password",
+          "name": "password",
+          "type": "string",
+          "typeOptions": {
+            "password": true
+          },
+          "default": "",
+          "description": "Password protect the webhook",
+          "routing": {
+            "send": {
+              "type": "body",
+              "property": "password"
+            }
+          }
+        }
+      ],
+      "description": "Additional options for URL creation/update"
+    },
+    {
+      "displayName": "Filters",
+      "name": "filters",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Filter",
+      "displayOptions": {
+        "show": {
+          "operation": ["getRequests"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Sorting",
+          "name": "sorting",
+          "type": "options",
+          "default": "newest",
+          "options": [
+            {
+              "name": "Newest First",
+              "value": "newest"
+            },
+            {
+              "name": "Oldest First",
+              "value": "oldest"
+            }
+          ],
+          "description": "Sort order for requests",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "sorting"
+            }
+          }
+        },
+        {
+          "displayName": "Per Page",
+          "name": "per_page",
+          "type": "number",
+          "default": 50,
+          "typeOptions": {
+            "minValue": 1,
+            "maxValue": 100
+          },
+          "description": "Number of requests per page",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "per_page"
+            }
+          }
+        },
+        {
+          "displayName": "Page",
+          "name": "page",
+          "type": "number",
+          "default": 1,
+          "description": "Page number",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "page"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "displayName": "Query Parameters",
+      "name": "queryParameters",
+      "type": "fixedCollection",
+      "default": {},
+      "placeholder": "Add Parameter",
+      "typeOptions": {
+        "multipleValues": true
+      },
+      "displayOptions": {
+        "show": {
+          "operation": ["sendRequest"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Parameter",
+          "name": "parameter",
+          "values": [
+            {
+              "displayName": "Name",
+              "name": "name",
+              "type": "string",
+              "default": "",
+              "description": "Query parameter name"
+            },
+            {
+              "displayName": "Value",
+              "name": "value",
+              "type": "string",
+              "default": "",
+              "description": "Query parameter value"
+            }
+          ]
+        }
+      ],
+      "description": "Query parameters to send with the request",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "={{ $value.parameter.reduce((acc, param) => ({ ...acc, [param.name]: param.value }), {}) }}"
+        }
+      }
+    }
+  ]
+}

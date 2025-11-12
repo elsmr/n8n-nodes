@@ -1,0 +1,267 @@
+{
+  "displayName": "QR Code",
+  "name": "qrcode",
+  "group": ["transform"],
+  "version": 1,
+  "subtitle": "={{ $parameter[\"operation\"] }}",
+  "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg",
+  "description": "Generate QR codes from text, URLs, or other data",
+  "defaults": {
+    "name": "QR Code"
+  },
+  "usableAsTool": true,
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "requestDefaults": {
+    "baseURL": "https://api.qrserver.com/v1",
+    "returnFullResponse": true
+  },
+  "properties": [
+    {
+      "displayName": "Operation",
+      "name": "operation",
+      "type": "options",
+      "noDataExpression": true,
+      "options": [
+        {
+          "name": "Generate QR Code",
+          "value": "create",
+          "description": "Generate a QR code image",
+          "action": "Generate QR code",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/create-qr-code/"
+            }
+          }
+        },
+        {
+          "name": "Read QR Code",
+          "value": "read",
+          "description": "Decode a QR code from an image URL",
+          "action": "Read QR code",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/read-qr-code/"
+            }
+          }
+        }
+      ],
+      "default": "create",
+      "description": "The operation to perform"
+    },
+    {
+      "displayName": "Data",
+      "name": "data",
+      "type": "string",
+      "default": "",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["create"]
+        }
+      },
+      "description": "The data to encode in the QR code (URL, text, vCard, etc.)",
+      "placeholder": "https://example.com",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "data"
+        }
+      }
+    },
+    {
+      "displayName": "Image URL",
+      "name": "fileurl",
+      "type": "string",
+      "default": "",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["read"]
+        }
+      },
+      "description": "URL of the QR code image to decode",
+      "placeholder": "https://example.com/qrcode.png",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "fileurl"
+        }
+      }
+    },
+    {
+      "displayName": "Options",
+      "name": "options",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Option",
+      "displayOptions": {
+        "show": {
+          "operation": ["create"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Size",
+          "name": "size",
+          "type": "string",
+          "default": "200x200",
+          "placeholder": "200x200",
+          "description": "Image size in pixels (e.g., 200x200, 300x300)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "size"
+            }
+          }
+        },
+        {
+          "displayName": "Format",
+          "name": "format",
+          "type": "options",
+          "default": "png",
+          "options": [
+            {
+              "name": "PNG",
+              "value": "png"
+            },
+            {
+              "name": "GIF",
+              "value": "gif"
+            },
+            {
+              "name": "JPEG",
+              "value": "jpeg"
+            },
+            {
+              "name": "JPG",
+              "value": "jpg"
+            },
+            {
+              "name": "SVG",
+              "value": "svg"
+            }
+          ],
+          "description": "Image format",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "format"
+            }
+          }
+        },
+        {
+          "displayName": "Error Correction Level",
+          "name": "ecc",
+          "type": "options",
+          "default": "M",
+          "options": [
+            {
+              "name": "L - Low (7%)",
+              "value": "L",
+              "description": "Low error correction (~7% damage recovery)"
+            },
+            {
+              "name": "M - Medium (15%)",
+              "value": "M",
+              "description": "Medium error correction (~15% damage recovery)"
+            },
+            {
+              "name": "Q - Quartile (25%)",
+              "value": "Q",
+              "description": "Quartile error correction (~25% damage recovery)"
+            },
+            {
+              "name": "H - High (30%)",
+              "value": "H",
+              "description": "High error correction (~30% damage recovery)"
+            }
+          ],
+          "description": "Error correction level - higher levels allow more damage to the QR code",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "ecc"
+            }
+          }
+        },
+        {
+          "displayName": "Foreground Color",
+          "name": "color",
+          "type": "string",
+          "default": "000000",
+          "placeholder": "000000",
+          "description": "Foreground color in hex format (without #)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "color"
+            }
+          }
+        },
+        {
+          "displayName": "Background Color",
+          "name": "bgcolor",
+          "type": "string",
+          "default": "ffffff",
+          "placeholder": "ffffff",
+          "description": "Background color in hex format (without #)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "bgcolor"
+            }
+          }
+        },
+        {
+          "displayName": "Margin",
+          "name": "margin",
+          "type": "number",
+          "default": 0,
+          "typeOptions": {
+            "minValue": 0,
+            "maxValue": 50
+          },
+          "description": "Margin around the QR code in pixels (0-50)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "margin"
+            }
+          }
+        },
+        {
+          "displayName": "Character Set",
+          "name": "charset-source",
+          "type": "string",
+          "default": "",
+          "placeholder": "UTF-8",
+          "description": "Character encoding of the input data (e.g., UTF-8, ISO-8859-1)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "charset-source"
+            }
+          }
+        },
+        {
+          "displayName": "Download",
+          "name": "download",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to return the image as a download instead of displaying it",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "download",
+              "value": "={{ $value ? 1 : undefined }}"
+            }
+          }
+        }
+      ],
+      "description": "Additional options for QR code generation"
+    }
+  ]
+}

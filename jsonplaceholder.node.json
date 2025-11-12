@@ -1,0 +1,275 @@
+{
+  "displayName": "JSONPlaceholder",
+  "name": "jsonplaceholder",
+  "group": ["transform"],
+  "version": 1,
+  "subtitle": "={{$parameter[\"operation\"] + \": \" + $parameter[\"resource\"]}}",
+  "iconUrl": "https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/json.svg",
+  "description": "Free fake REST API for testing and prototyping",
+  "defaults": {
+    "name": "JSONPlaceholder"
+  },
+  "usableAsTool": true,
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "requestDefaults": {
+    "baseURL": "https://jsonplaceholder.typicode.com",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "properties": [
+    {
+      "displayName": "Resource",
+      "name": "resource",
+      "type": "options",
+      "noDataExpression": true,
+      "options": [
+        {
+          "name": "Post",
+          "value": "posts",
+          "description": "Blog posts"
+        },
+        {
+          "name": "Comment",
+          "value": "comments",
+          "description": "Post comments"
+        },
+        {
+          "name": "Album",
+          "value": "albums",
+          "description": "Photo albums"
+        },
+        {
+          "name": "Photo",
+          "value": "photos",
+          "description": "Photos"
+        },
+        {
+          "name": "Todo",
+          "value": "todos",
+          "description": "Todo items"
+        },
+        {
+          "name": "User",
+          "value": "users",
+          "description": "Users"
+        }
+      ],
+      "default": "posts",
+      "description": "The resource to operate on"
+    },
+    {
+      "displayName": "Operation",
+      "name": "operation",
+      "type": "options",
+      "noDataExpression": true,
+      "displayOptions": {
+        "show": {
+          "resource": ["posts", "comments", "albums", "photos", "todos", "users"]
+        }
+      },
+      "options": [
+        {
+          "name": "Get",
+          "value": "get",
+          "description": "Get a specific resource by ID",
+          "action": "Get a resource",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "=/{{$parameter[\"resource\"]}}/{{$parameter[\"id\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Get Many",
+          "value": "getAll",
+          "description": "Get all resources",
+          "action": "Get many resources",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "=/{{$parameter[\"resource\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Create",
+          "value": "create",
+          "description": "Create a new resource",
+          "action": "Create a resource",
+          "routing": {
+            "request": {
+              "method": "POST",
+              "url": "=/{{$parameter[\"resource\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Update",
+          "value": "update",
+          "description": "Update a resource",
+          "action": "Update a resource",
+          "routing": {
+            "request": {
+              "method": "PUT",
+              "url": "=/{{$parameter[\"resource\"]}}/{{$parameter[\"id\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Delete",
+          "value": "delete",
+          "description": "Delete a resource",
+          "action": "Delete a resource",
+          "routing": {
+            "request": {
+              "method": "DELETE",
+              "url": "=/{{$parameter[\"resource\"]}}/{{$parameter[\"id\"]}}"
+            }
+          }
+        }
+      ],
+      "default": "getAll",
+      "description": "The operation to perform"
+    },
+    {
+      "displayName": "ID",
+      "name": "id",
+      "type": "number",
+      "default": 1,
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["get", "update", "delete"]
+        }
+      },
+      "description": "The ID of the resource"
+    },
+    {
+      "displayName": "Title",
+      "name": "title",
+      "type": "string",
+      "default": "",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "resource": ["posts"],
+          "operation": ["create", "update"]
+        }
+      },
+      "description": "Post title",
+      "routing": {
+        "send": {
+          "type": "body",
+          "property": "title"
+        }
+      }
+    },
+    {
+      "displayName": "Body",
+      "name": "body",
+      "type": "string",
+      "default": "",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "resource": ["posts"],
+          "operation": ["create", "update"]
+        }
+      },
+      "description": "Post body content",
+      "routing": {
+        "send": {
+          "type": "body",
+          "property": "body"
+        }
+      }
+    },
+    {
+      "displayName": "User ID",
+      "name": "userId",
+      "type": "number",
+      "default": 1,
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "resource": ["posts"],
+          "operation": ["create", "update"]
+        }
+      },
+      "description": "User ID of the post author",
+      "routing": {
+        "send": {
+          "type": "body",
+          "property": "userId"
+        }
+      }
+    },
+    {
+      "displayName": "Filters",
+      "name": "filters",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Filter",
+      "displayOptions": {
+        "show": {
+          "operation": ["getAll"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "User ID",
+          "name": "userId",
+          "type": "number",
+          "default": 0,
+          "description": "Filter by user ID",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "userId"
+            }
+          }
+        },
+        {
+          "displayName": "Post ID",
+          "name": "postId",
+          "type": "number",
+          "default": 0,
+          "description": "Filter by post ID (for comments)",
+          "displayOptions": {
+            "show": {
+              "/resource": ["comments"]
+            }
+          },
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "postId"
+            }
+          }
+        },
+        {
+          "displayName": "Album ID",
+          "name": "albumId",
+          "type": "number",
+          "default": 0,
+          "description": "Filter by album ID (for photos)",
+          "displayOptions": {
+            "show": {
+              "/resource": ["photos"]
+            }
+          },
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "albumId"
+            }
+          }
+        }
+      ],
+      "description": "Additional filters for the request"
+    }
+  ]
+}

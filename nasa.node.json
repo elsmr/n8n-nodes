@@ -1,0 +1,435 @@
+{
+  "displayName": "NASA",
+  "name": "nasa",
+  "group": ["transform"],
+  "version": 1,
+  "subtitle": "={{ $parameter[\"operation\"] }}",
+  "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg",
+  "description": "Access NASA's public APIs for astronomy pictures, Mars rovers, and more",
+  "defaults": {
+    "name": "NASA"
+  },
+  "usableAsTool": true,
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "requestDefaults": {
+    "baseURL": "https://api.nasa.gov",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "properties": [
+    {
+      "displayName": "Operation",
+      "name": "operation",
+      "type": "options",
+      "noDataExpression": true,
+      "options": [
+        {
+          "name": "Astronomy Picture of the Day",
+          "value": "apod",
+          "description": "Get the astronomy picture of the day",
+          "action": "Get astronomy picture of the day",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/planetary/apod"
+            }
+          }
+        },
+        {
+          "name": "Mars Rover Photos",
+          "value": "marsPhotos",
+          "description": "Get photos from Mars rovers",
+          "action": "Get Mars rover photos",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "=/mars-photos/api/v1/rovers/{{$parameter[\"rover\"]}}/photos"
+            },
+            "output": {
+              "postReceive": [
+                {
+                  "type": "rootProperty",
+                  "properties": {
+                    "property": "photos"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Near Earth Objects",
+          "value": "neo",
+          "description": "Get near-Earth asteroid information",
+          "action": "Get near-Earth objects",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/neo/rest/v1/feed"
+            }
+          }
+        },
+        {
+          "name": "Earth Imagery",
+          "value": "earthImagery",
+          "description": "Get satellite imagery of Earth",
+          "action": "Get Earth imagery",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/planetary/earth/imagery"
+            }
+          }
+        }
+      ],
+      "default": "apod",
+      "description": "The operation to perform"
+    },
+    {
+      "displayName": "API Key",
+      "name": "apiKey",
+      "type": "string",
+      "default": "DEMO_KEY",
+      "required": true,
+      "description": "NASA API key (DEMO_KEY has rate limits, get your own at api.nasa.gov)",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "api_key"
+        }
+      }
+    },
+    {
+      "displayName": "Options",
+      "name": "options",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Option",
+      "displayOptions": {
+        "show": {
+          "operation": ["apod"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Date",
+          "name": "date",
+          "type": "string",
+          "default": "",
+          "placeholder": "YYYY-MM-DD",
+          "description": "The date of the APOD image to retrieve (defaults to today)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "date"
+            }
+          }
+        },
+        {
+          "displayName": "High Resolution",
+          "name": "hd",
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to retrieve the high resolution image URL",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "hd"
+            }
+          }
+        },
+        {
+          "displayName": "Start Date",
+          "name": "start_date",
+          "type": "string",
+          "default": "",
+          "placeholder": "YYYY-MM-DD",
+          "description": "The start of a date range for APOD images",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "start_date"
+            }
+          }
+        },
+        {
+          "displayName": "End Date",
+          "name": "end_date",
+          "type": "string",
+          "default": "",
+          "placeholder": "YYYY-MM-DD",
+          "description": "The end of a date range for APOD images",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "end_date"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "displayName": "Rover",
+      "name": "rover",
+      "type": "options",
+      "default": "curiosity",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["marsPhotos"]
+        }
+      },
+      "options": [
+        {
+          "name": "Curiosity",
+          "value": "curiosity"
+        },
+        {
+          "name": "Opportunity",
+          "value": "opportunity"
+        },
+        {
+          "name": "Spirit",
+          "value": "spirit"
+        },
+        {
+          "name": "Perseverance",
+          "value": "perseverance"
+        }
+      ],
+      "description": "Which Mars rover to get photos from"
+    },
+    {
+      "displayName": "Sol or Earth Date",
+      "name": "dateType",
+      "type": "options",
+      "default": "sol",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["marsPhotos"]
+        }
+      },
+      "options": [
+        {
+          "name": "Sol (Martian Day)",
+          "value": "sol"
+        },
+        {
+          "name": "Earth Date",
+          "value": "earth_date"
+        }
+      ],
+      "description": "Filter by Martian sol or Earth date"
+    },
+    {
+      "displayName": "Sol",
+      "name": "sol",
+      "type": "number",
+      "default": 1000,
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["marsPhotos"],
+          "dateType": ["sol"]
+        }
+      },
+      "description": "Martian sol (day) to retrieve photos from",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "sol"
+        }
+      }
+    },
+    {
+      "displayName": "Earth Date",
+      "name": "earth_date",
+      "type": "string",
+      "default": "",
+      "placeholder": "YYYY-MM-DD",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["marsPhotos"],
+          "dateType": ["earth_date"]
+        }
+      },
+      "description": "Earth date to retrieve photos from",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "earth_date"
+        }
+      }
+    },
+    {
+      "displayName": "Options",
+      "name": "options",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Option",
+      "displayOptions": {
+        "show": {
+          "operation": ["marsPhotos"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Camera",
+          "name": "camera",
+          "type": "string",
+          "default": "",
+          "description": "Filter by camera abbreviation (e.g., FHAZ, RHAZ, MAST, CHEMCAM, NAVCAM)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "camera"
+            }
+          }
+        },
+        {
+          "displayName": "Page",
+          "name": "page",
+          "type": "number",
+          "default": 1,
+          "description": "Page number for pagination (25 items per page)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "page"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "displayName": "Start Date",
+      "name": "start_date",
+      "type": "string",
+      "default": "",
+      "placeholder": "YYYY-MM-DD",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["neo"]
+        }
+      },
+      "description": "Start date for NEO search",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "start_date"
+        }
+      }
+    },
+    {
+      "displayName": "End Date",
+      "name": "end_date",
+      "type": "string",
+      "default": "",
+      "placeholder": "YYYY-MM-DD",
+      "displayOptions": {
+        "show": {
+          "operation": ["neo"]
+        }
+      },
+      "description": "End date for NEO search (max 7 days from start)",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "end_date"
+        }
+      }
+    },
+    {
+      "displayName": "Latitude",
+      "name": "lat",
+      "type": "number",
+      "default": 0,
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["earthImagery"]
+        }
+      },
+      "typeOptions": {
+        "minValue": -90,
+        "maxValue": 90
+      },
+      "description": "Latitude of the location",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "lat"
+        }
+      }
+    },
+    {
+      "displayName": "Longitude",
+      "name": "lon",
+      "type": "number",
+      "default": 0,
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["earthImagery"]
+        }
+      },
+      "typeOptions": {
+        "minValue": -180,
+        "maxValue": 180
+      },
+      "description": "Longitude of the location",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "lon"
+        }
+      }
+    },
+    {
+      "displayName": "Options",
+      "name": "options",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Option",
+      "displayOptions": {
+        "show": {
+          "operation": ["earthImagery"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Date",
+          "name": "date",
+          "type": "string",
+          "default": "",
+          "placeholder": "YYYY-MM-DD",
+          "description": "Date of the image (defaults to most recent)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "date"
+            }
+          }
+        },
+        {
+          "displayName": "Dimension",
+          "name": "dim",
+          "type": "number",
+          "default": 0.025,
+          "description": "Width and height of image in degrees (max 0.025)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "dim"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

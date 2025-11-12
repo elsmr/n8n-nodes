@@ -1,0 +1,261 @@
+{
+  "displayName": "Random User Generator",
+  "name": "randomuser",
+  "group": ["transform"],
+  "version": 1,
+  "subtitle": "Generate Random Users",
+  "iconUrl": "https://www.svgrepo.com/show/105517/user-icon.svg",
+  "description": "Generate realistic random user data for testing and development",
+  "defaults": {
+    "name": "Random User"
+  },
+  "usableAsTool": true,
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "requestDefaults": {
+    "baseURL": "https://randomuser.me/api",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "properties": [
+    {
+      "displayName": "Operation",
+      "name": "operation",
+      "type": "options",
+      "noDataExpression": true,
+      "options": [
+        {
+          "name": "Generate Users",
+          "value": "generate",
+          "description": "Generate random user data",
+          "action": "Generate random users",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/"
+            },
+            "output": {
+              "postReceive": [
+                {
+                  "type": "rootProperty",
+                  "properties": {
+                    "property": "results"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "default": "generate"
+    },
+    {
+      "displayName": "Number of Results",
+      "name": "results",
+      "type": "number",
+      "default": 1,
+      "typeOptions": {
+        "minValue": 1,
+        "maxValue": 5000
+      },
+      "description": "Number of users to generate (1-5000)",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "results"
+        }
+      }
+    },
+    {
+      "displayName": "Options",
+      "name": "options",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Option",
+      "options": [
+        {
+          "displayName": "Gender",
+          "name": "gender",
+          "type": "options",
+          "default": "",
+          "options": [
+            {
+              "name": "Random",
+              "value": ""
+            },
+            {
+              "name": "Male",
+              "value": "male"
+            },
+            {
+              "name": "Female",
+              "value": "female"
+            }
+          ],
+          "description": "Filter results by gender",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "gender"
+            }
+          }
+        },
+        {
+          "displayName": "Nationality",
+          "name": "nat",
+          "type": "string",
+          "default": "",
+          "placeholder": "US,GB,FR",
+          "description": "Comma-separated list of nationality codes (e.g., US, GB, FR, DE, ES, AU)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "nat"
+            }
+          }
+        },
+        {
+          "displayName": "Include Fields",
+          "name": "inc",
+          "type": "string",
+          "default": "",
+          "placeholder": "name,email,phone",
+          "description": "Comma-separated list of fields to include (e.g., gender, name, location, email, login, registered, dob, phone, cell, id, picture, nat)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "inc"
+            }
+          }
+        },
+        {
+          "displayName": "Exclude Fields",
+          "name": "exc",
+          "type": "string",
+          "default": "",
+          "placeholder": "login,registered",
+          "description": "Comma-separated list of fields to exclude",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "exc"
+            }
+          }
+        },
+        {
+          "displayName": "Password Format",
+          "name": "password",
+          "type": "options",
+          "default": "special,upper,lower,number,8-64",
+          "options": [
+            {
+              "name": "Default (special,upper,lower,number,8-64)",
+              "value": "special,upper,lower,number,8-64"
+            },
+            {
+              "name": "Simple (lower,8-12)",
+              "value": "lower,8-12"
+            },
+            {
+              "name": "Strong (special,upper,lower,number,12-20)",
+              "value": "special,upper,lower,number,12-20"
+            },
+            {
+              "name": "Custom",
+              "value": "custom"
+            }
+          ],
+          "description": "Password character set and length format",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "password"
+            }
+          }
+        },
+        {
+          "displayName": "Custom Password Format",
+          "name": "customPassword",
+          "type": "string",
+          "default": "",
+          "placeholder": "upper,lower,number,10-16",
+          "displayOptions": {
+            "show": {
+              "password": ["custom"]
+            }
+          },
+          "description": "Custom password format (e.g., upper,lower,number,10-16)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "password"
+            }
+          }
+        },
+        {
+          "displayName": "Seed",
+          "name": "seed",
+          "type": "string",
+          "default": "",
+          "description": "Seed to generate consistent results across multiple requests",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "seed"
+            }
+          }
+        },
+        {
+          "displayName": "Page",
+          "name": "page",
+          "type": "number",
+          "default": 1,
+          "description": "Page number (works with seed for pagination)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "page"
+            }
+          }
+        },
+        {
+          "displayName": "Data Format",
+          "name": "format",
+          "type": "options",
+          "default": "json",
+          "options": [
+            {
+              "name": "JSON",
+              "value": "json"
+            },
+            {
+              "name": "Pretty JSON",
+              "value": "prettyjson"
+            },
+            {
+              "name": "CSV",
+              "value": "csv"
+            },
+            {
+              "name": "YAML",
+              "value": "yaml"
+            },
+            {
+              "name": "XML",
+              "value": "xml"
+            }
+          ],
+          "description": "Output data format",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "format"
+            }
+          }
+        }
+      ],
+      "description": "Additional options for user generation"
+    }
+  ]
+}

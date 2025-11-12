@@ -2,7 +2,7 @@
   "$schema": "./node.schema.json",
   "displayName": "Foo",
   "name": "foo",
-  "iconUrl": "https://foo.com/foo.svg",
+  "iconUrl": "https://raw.githubusercontent.com/yehorkardash/n8n-nodes/refs/heads/main/icon.svg",
   "group": ["transform"],
   "version": 1,
   "subtitle": "={{$parameter[\"operation\"] + \": \" + $parameter[\"resource\"]}}",

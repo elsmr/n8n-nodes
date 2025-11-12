@@ -1,0 +1,160 @@
+{
+  "displayName": "Cat Facts",
+  "name": "catfacts",
+  "group": ["transform"],
+  "version": 1,
+  "subtitle": "={{ $parameter[\"operation\"] }}",
+  "iconUrl": "https://cdn.jsdelivr.net/npm/simple-icons@3.13.0/icons/caterpillar.svg",
+  "description": "Get random cat facts and cat-related information",
+  "defaults": {
+    "name": "Cat Facts"
+  },
+  "usableAsTool": true,
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "requestDefaults": {
+    "baseURL": "https://catfact.ninja",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "properties": [
+    {
+      "displayName": "Operation",
+      "name": "operation",
+      "type": "options",
+      "noDataExpression": true,
+      "options": [
+        {
+          "name": "Get Random Fact",
+          "value": "getFact",
+          "description": "Get a random cat fact",
+          "action": "Get a random cat fact",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/fact"
+            }
+          }
+        },
+        {
+          "name": "Get Many Facts",
+          "value": "getFacts",
+          "description": "Get multiple cat facts with pagination",
+          "action": "Get many cat facts",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/facts"
+            },
+            "output": {
+              "postReceive": [
+                {
+                  "type": "rootProperty",
+                  "properties": {
+                    "property": "data"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Cat Breeds",
+          "value": "getBreeds",
+          "description": "Get list of cat breeds",
+          "action": "Get cat breeds",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/breeds"
+            },
+            "output": {
+              "postReceive": [
+                {
+                  "type": "rootProperty",
+                  "properties": {
+                    "property": "data"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "default": "getFact",
+      "description": "The operation to perform"
+    },
+    {
+      "displayName": "Options",
+      "name": "options",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Option",
+      "displayOptions": {
+        "show": {
+          "operation": ["getFact"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Max Length",
+          "name": "max_length",
+          "type": "number",
+          "default": 0,
+          "description": "Maximum length of the fact in characters. Leave at 0 for no limit.",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "max_length"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "displayName": "Options",
+      "name": "options",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Option",
+      "displayOptions": {
+        "show": {
+          "operation": ["getFacts", "getBreeds"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Limit",
+          "name": "limit",
+          "type": "number",
+          "default": 10,
+          "typeOptions": {
+            "minValue": 1,
+            "maxValue": 100
+          },
+          "description": "Number of results to return per page",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "limit"
+            }
+          }
+        },
+        {
+          "displayName": "Page",
+          "name": "page",
+          "type": "number",
+          "default": 1,
+          "description": "Page number for pagination",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "page"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
