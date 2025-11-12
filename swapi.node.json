@@ -1,0 +1,244 @@
+{
+  "displayName": "Star Wars API",
+  "name": "swapi",
+  "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Star_Wars_Logo_2.svg",
+  "group": ["transform"],
+  "version": 1,
+  "subtitle": "={{$parameter[\"operation\"] + \": \" + $parameter[\"resource\"]}}",
+  "description": "Interact with the Star Wars API (SWAPI)",
+  "defaults": {
+    "name": "SWAPI"
+  },
+  "usableAsTool": true,
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "requestDefaults": {
+    "baseURL": "https://swapi.dev/api",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "properties": [
+    {
+      "displayName": "Resource",
+      "name": "resource",
+      "type": "options",
+      "noDataExpression": true,
+      "options": [
+        {
+          "name": "Film",
+          "value": "films",
+          "description": "Star Wars films"
+        },
+        {
+          "name": "People",
+          "value": "people",
+          "description": "Star Wars characters"
+        },
+        {
+          "name": "Planet",
+          "value": "planets",
+          "description": "Star Wars planets"
+        },
+        {
+          "name": "Species",
+          "value": "species",
+          "description": "Star Wars species"
+        },
+        {
+          "name": "Starship",
+          "value": "starships",
+          "description": "Star Wars starships"
+        },
+        {
+          "name": "Vehicle",
+          "value": "vehicles",
+          "description": "Star Wars vehicles"
+        }
+      ],
+      "default": "people",
+      "description": "The resource to operate on"
+    },
+    {
+      "displayName": "Operation",
+      "name": "operation",
+      "type": "options",
+      "noDataExpression": true,
+      "options": [
+        {
+          "name": "Get",
+          "value": "get",
+          "description": "Get a specific resource by ID",
+          "action": "Get a resource",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "=/{{$parameter[\"resource\"]}}/{{$parameter[\"id\"]}}"
+            }
+          }
+        },
+        {
+          "name": "Get Many",
+          "value": "getAll",
+          "description": "Get many resources with pagination",
+          "action": "Get many resources",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "=/{{$parameter[\"resource\"]}}"
+            },
+            "output": {
+              "postReceive": [
+                {
+                  "type": "rootProperty",
+                  "properties": {
+                    "property": "results"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search",
+          "value": "search",
+          "description": "Search for resources by name",
+          "action": "Search resources",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "=/{{$parameter[\"resource\"]}}"
+            },
+            "output": {
+              "postReceive": [
+                {
+                  "type": "rootProperty",
+                  "properties": {
+                    "property": "results"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "default": "get",
+      "description": "The operation to perform"
+    },
+    {
+      "displayName": "ID",
+      "name": "id",
+      "type": "number",
+      "default": 1,
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["get"]
+        }
+      },
+      "description": "The ID of the resource to retrieve",
+      "placeholder": "1"
+    },
+    {
+      "displayName": "Return All",
+      "name": "returnAll",
+      "type": "boolean",
+      "displayOptions": {
+        "show": {
+          "operation": ["getAll", "search"]
+        }
+      },
+      "default": false,
+      "description": "Whether to return all results or only up to a given limit"
+    },
+    {
+      "displayName": "Limit",
+      "name": "limit",
+      "type": "number",
+      "displayOptions": {
+        "show": {
+          "operation": ["getAll", "search"],
+          "returnAll": [false]
+        }
+      },
+      "typeOptions": {
+        "minValue": 1,
+        "maxValue": 100
+      },
+      "default": 10,
+      "description": "Max number of results to return"
+    },
+    {
+      "displayName": "Search Term",
+      "name": "search",
+      "type": "string",
+      "default": "",
+      "required": true,
+      "displayOptions": {
+        "show": {
+          "operation": ["search"]
+        }
+      },
+      "description": "The term to search for",
+      "placeholder": "Luke Skywalker",
+      "routing": {
+        "send": {
+          "type": "query",
+          "property": "search"
+        }
+      }
+    },
+    {
+      "displayName": "Options",
+      "name": "options",
+      "type": "collection",
+      "default": {},
+      "placeholder": "Add Option",
+      "displayOptions": {
+        "show": {
+          "operation": ["getAll", "search"]
+        }
+      },
+      "options": [
+        {
+          "displayName": "Page",
+          "name": "page",
+          "type": "number",
+          "default": 1,
+          "description": "The page number to retrieve (SWAPI returns 10 results per page)",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "page"
+            }
+          }
+        },
+        {
+          "displayName": "Format",
+          "name": "format",
+          "type": "options",
+          "options": [
+            {
+              "name": "JSON",
+              "value": "json"
+            },
+            {
+              "name": "Wookiee",
+              "value": "wookiee",
+              "description": "Translates all keys and values to Shyriiwook"
+            }
+          ],
+          "default": "json",
+          "description": "Response format",
+          "routing": {
+            "send": {
+              "type": "query",
+              "property": "format"
+            }
+          }
+        }
+      ],
+      "description": "Additional options for the request"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "$schema": "./node.schema.json",
   "displayName": "Foo",
   "name": "foo",
-  "icon": "file:foo.svg",
+  "iconUrl": "https://foo.com/foo.svg",
   "group": ["transform"],
   "version": 1,
   "subtitle": "={{$parameter[\"operation\"] + \": \" + $parameter[\"resource\"]}}",
