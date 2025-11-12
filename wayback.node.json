@@ -4,6 +4,7 @@
   "group": ["transform"],
   "version": 1,
   "subtitle": "={{ $parameter[\"operation\"] }}",
+  "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/0/01/Wayback_Machine_logo_2010.svg",
   "description": "API for Internet Archive's Wayback Machine",
   "defaults": {
     "name": "Wayback"

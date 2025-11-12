@@ -4,6 +4,7 @@
   "group": ["transform"],
   "version": 1,
   "subtitle": "={{ $parameter[\"operation\"] }}",
+  "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/a/af/Lichess_Logo.svg",
   "description": "# Introduction Welcome to the reference for the Lichess API! Lichess is free/libre, open-source chess server powered by ...",
   "defaults": {
     "name": "Lichess"
