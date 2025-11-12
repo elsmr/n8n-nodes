@@ -4,7 +4,7 @@
   "group": ["transform"],
   "version": 1,
   "subtitle": "={{ $parameter[\"operation\"] }}",
-  "iconUrl": "https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/webhook.svg",
+  "iconUrl": "https://www.svgrepo.com/show/510340/webhook.svg",
   "description": "Test webhooks and HTTP requests with webhook.site",
   "defaults": {
     "name": "Webhook.site"
