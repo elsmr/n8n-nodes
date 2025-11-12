@@ -1,5 +1,5 @@
 {
-  "$schema": "./schema.json",
+  "$schema": "./node.schema.json",
   "displayName": "Bar",
   "name": "bar",
   "icon": "file:bar.svg",
@@ -21,7 +21,7 @@
   ],
   "requestDefaults": {
     "returnFullResponse": true,
-    "baseURL": "={{$credentials.url.replace(new RegExp(\"/$\"), \"\")}}",
+    "baseURL": "https://webhook.site",
     "headers": {}
   },
   "properties": [
@@ -33,7 +33,14 @@
       "options": [
         {
           "name": "Bar",
-          "value": "bar"
+          "value": "bar",
+          "routing": {
+            "request": {
+              "method": "GET",
+              "url": "/37674164-b7e2-4610-93cc-e7c1cd4257bf",
+              "returnFullResponse": true
+            }
+          }
         }
       ],
       "default": "bar"
