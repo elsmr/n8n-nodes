@@ -1,0 +1,42 @@
+{
+  "$schema": "./schema.json",
+  "displayName": "Bar",
+  "name": "bar",
+  "icon": "file:bar.svg",
+  "group": ["transform"],
+  "version": 1,
+  "subtitle": "={{$parameter[\"operation\"] + \": \" + $parameter[\"resource\"]}}",
+  "description": "Use the Bar API",
+  "defaults": {
+    "name": "Bar"
+  },
+  "usableAsTool": true,
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "credentials": [
+    {
+      "name": "barApi",
+      "required": true
+    }
+  ],
+  "requestDefaults": {
+    "returnFullResponse": true,
+    "baseURL": "={{$credentials.url.replace(new RegExp(\"/$\"), \"\")}}",
+    "headers": {}
+  },
+  "properties": [
+    {
+      "displayName": "Resource",
+      "name": "resource",
+      "type": "options",
+      "noDataExpression": true,
+      "options": [
+        {
+          "name": "Bar",
+          "value": "bar"
+        }
+      ],
+      "default": "bar"
+    }
+  ]
+}
